@@ -21,16 +21,16 @@ conf_file="${KEYCLOAK_CONF_DIR}/${KEYCLOAK_CONF_FILE}"
 
 is_boolean_yes "$KEYCLOAK_PRODUCTION" && start_param="start" || start_param="start-dev"
 
-start_command=("${KEYCLOAK_BIN_DIR}/kc.sh -cf ${conf_file} ${start_param}")
+start_command=("${KEYCLOAK_BIN_DIR}/kc.sh" "-cf" "$conf_file" "$start_param")
 
 # Add extra args
 if [[ -n "$KEYCLOAK_EXTRA_ARGS" ]]; then
     read -r -a extra_args <<<"$KEYCLOAK_EXTRA_ARGS"
-    start_command+=" ${extra_args[@]}"
+    start_command+=("${extra_args[@]}")
 fi
 
 if am_i_root; then
-    exec gosu "$KEYCLOAK_DAEMON_USER" /bin/bash -c "${start_command[@]}"
+    exec gosu "$KEYCLOAK_DAEMON_USER" /bin/bash -c "${start_command[*]}"
 else
-    exec /bin/bash -c "${start_command[@]}"
+    exec /bin/bash -c "${start_command[*]}"
 fi
